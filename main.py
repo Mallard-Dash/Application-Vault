@@ -2,38 +2,51 @@
 
 import sqlite3
 from colorama import Fore, init
+import datetime
 
 class Main():
-    def __init__ (self, name, contact, email, note, phone_number = 0):
+    def __init__ (self, name = None, contact=None, email=None, note=None, phone_number = 0):
         self.name = name
         self.contact = contact
         self.email = email
         self.phone_number = phone_number
         self.note = note
-
+    
     def new_company(self):
+        self.name = input("Write the name of the company: ")
+        self.contact = input("Write the name of the contact: ")
+        self.email = input("Add contact email: ")
+        self.phone_number = input("Add contact phone_number: ")
+        self.note = input("Add a note for this company: ")
 
         self.data = (self.name, self.contact, self.email, self.phone_number, self.note)
         print("New company created: ")
-        for values in data:
+        for values in self.data:
             print(f"--{values}--")
+        self.save_to_database()
+
 
     def database_connection(self):
         self.con = sqlite3.Connection("LIA.db")
-        self.cur = con.cursor()
-        return con, cur
+        self.cur = self.con.cursor()
+        return self.con, self.cur
 
     def close_database(self):
         return con.close()
 
     def save_to_database(self):
         advance = input("Save to database? (Y/N): ")
-        if advance.lower() == "Y":
+        if advance.upper() == "Y":
+            sql = """
+            INSERT INTO Companies (name, contact, email, phone_number, note) 
+            VALUES (?, ?, ?, ?, ?)
+            """
             self.database_connection()
-            self.cur.executemany("INSERT INTO movie VALUES(?, ?, ?, ?, ?)", self.data)
+            self.cur.execute(sql, self.data)
             self.con.commit()
-        elif advance.lower == "N":
-            pass    
+            print ("Successfully saved!")
+        elif advance.upper() == "N":
+            return
 
     def main_menu(self):
         while True:
@@ -52,7 +65,7 @@ class Main():
             elif menu_choice == 2:
                 pass
             elif menu_choice == 3:
-                pass
+                self.new_company()
             elif menu_choice == 4:
                 self.sub_menu()
             elif menu_choice == 5:
@@ -89,11 +102,5 @@ class Main():
                 print("Wrong input-choice, try again!")
                 continue
 
-name = input("Write the name of the company: ")
-contact = input("Write the name of the contact: ")
-email = input("Add contact email: ")
-phone_number = input("Add contact phone_number: ")
-note = input("Add a note for this company: ")
-
-test = Main(name=name, contact=contact, email=email, phone_number=phone_number, note=note)
-test.new_company()
+test = Main()
+test.main_menu()

@@ -48,6 +48,34 @@ class Main():
         elif advance.upper() == "N":
             return
 
+    def search_for_company(self):
+        self.database_connection()
+        company_to_find = input("Enter a company name to search for: ")
+        query = "SELECT * FROM Companies WHERE name LIKE ?"
+        self.cur.execute(query, (company_to_find,))
+        results = self.cur.fetchall()
+        if not results:
+            return (f"No companies found matching '{company_to_find}'.")
+        else:
+            print(f"Found {len(results)} matching companies (Press ENTER to go back):")
+            for row in results:
+                print (f"  - ID: {row[0]}, Name: {row[1]}, Contact: {row[2]}, Email: {row[3]}, Phone_number: {row[4]}, Note: {row[5]}")
+                input()
+
+    def show_spreadsheet(self):
+        self.database_connection()
+        query = "SELECT * FROM Companies"
+        self.cur.execute(query)
+        results = self.cur.fetchall()
+        if not results:
+            return (f"The table is empty")
+        else:
+            print(f"Found {len(results)} matching companies (Press ENTER to go back):")
+            for row in results:
+                print (f"  - ID: {row[0]}, Name: {row[1]}, Contact: {row[2]}, Email: {row[3]}, Phone_number: {row[4]}, Note: {row[5]}")
+                input()
+
+
     def main_menu(self):
         while True:
             print(f"***Main-Menu***\n",
@@ -61,15 +89,16 @@ class Main():
             except ValueError:
                 print("Wrong value! Only integers are allowed!")
             if menu_choice == 1:
-                pass
+                self.show_spreadsheet()
             elif menu_choice == 2:
-                pass
+                self.search_for_company()
             elif menu_choice == 3:
                 self.new_company()
             elif menu_choice == 4:
                 self.sub_menu()
             elif menu_choice == 5:
                 print("Logging off...")
+                self.close_database()
                 break
             else:
                 print("Wrong input-choice, try again!")
@@ -78,10 +107,10 @@ class Main():
     def sub_menu(self):
         while True:
             print(f"***Database-Menu***\n",
-            "1. Change/Add contact\n",
-            "2. Change/Add email\n",
-            "3. Change/Add phone-number\n",
-            "4. Change/Add note\n",
+            "1. Update contact\n",
+            "2. Update email\n",
+            "3. Update phone-number\n",
+            "4. Update note\n",
             "5. Back to main-menu")
             try:
                 menu_choice = int(input("Please choose a choice from 1-5: "))

@@ -33,5 +33,7 @@ CREATE TABLE IF NOT EXISTS Companies (
   phone_number TEXT,
   note TEXT
 );
+'''
 Mallard-Dash © 2025
+
 Developed by Vincent — designed as a practical tool for organizing internship applications and company contacts.
